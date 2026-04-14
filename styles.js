@@ -28,7 +28,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update active nav link based on current page
     updateActiveNavLink();
+    initPartnerCarousel();
 });
+
+// Partner carousel controls and autoplay
+function initPartnerCarousel() {
+    const carousel = document.querySelector('.partner-carousel');
+    const prev = document.querySelector('.carousel-prev');
+    const next = document.querySelector('.carousel-next');
+
+    if (!carousel || !prev || !next) return;
+
+    const scrollAmount = carousel.clientWidth * 0.8;
+    let autoScroll;
+
+    const clearAuto = () => {
+        if (autoScroll) {
+            window.clearInterval(autoScroll);
+            autoScroll = null;
+        }
+    };
+
+    const startAuto = () => {
+        clearAuto();
+        autoScroll = window.setInterval(() => {
+            if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 10) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }, 4200);
+    };
+
+    prev.addEventListener('click', () => {
+        carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        startAuto();
+    });
+
+    next.addEventListener('click', () => {
+        carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        startAuto();
+    });
+
+    carousel.addEventListener('mouseenter', clearAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+
+    startAuto();
+}
 
 // Update active navigation link
 function updateActiveNavLink() {
@@ -101,7 +147,7 @@ lazyLoadImages();
 
 // Animation on scroll (for elements entering viewport)
 function animateOnScroll() {
-    const elements = document.querySelectorAll('.point-card, .product-card, .value-card, .material-item, .service-card');
+    const elements = document.querySelectorAll('.point-card, .product-card, .value-card, .material-item, .service-card, .journey-card');
     
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
